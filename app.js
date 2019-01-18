@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const { db } = require('./models/index');
+const { db} = require('./models/index');
 const wikiRouter = require('./routes/wiki');
 const userRouter = require('./routes/user');
 
