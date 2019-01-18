@@ -3,23 +3,35 @@ const main = require('../views/main');
 const addPage = require('../views/addPage');
 const wikiPage = require('../views/wikiPage');
 const { Page } = require('../models/index');
+const { User } = require('../models/index');
 
 const router = express.Router();
 
 router.get('/', async (req, res, next) => {
-  const pages = await Page.findAll();
-  res.send(main(pages));
+  try {
+    const pages = await Page.findAll();
+    res.send(main(pages));
+  } catch (error) { next(error) };
 });
 
 router.post('/', async (req, res, next) => {
-  const page = new Page({
-    title: req.body.title,
-    slug: req.body.title,
-    content: req.body.content,
-    status: req.body.status
-  });
   try {
-    await page.save();
+    const user = await User.findOrCreate({
+      where: {
+        name: req.body.name,
+        email: req.body.email
+      }
+    });
+
+    const page = await Page.create({
+      title: req.body.title,
+      slug: req.body.title,
+      content: req.body.content,
+      status: req.body.status
+    });
+
+    page.setAuthor(user);
+
     res.redirect(`/wiki/${page.slug}`);
   } catch (error) { next(error) };
 });
