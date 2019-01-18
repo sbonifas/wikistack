@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const { db} = require('./models/index');
+const { db } = require('./models/index');
 const wikiRouter = require('./routes/wiki');
 const userRouter = require('./routes/user');
 
@@ -19,13 +19,13 @@ app.use('/user', userRouter);
 
 db.authenticate().
 then(() => {
-  console.log('connected to the database');
+  console.log('Connected to the database');
 });
 
 const PORT = 3000;
 
 const init = async() => {
-  await db.sync({ force: true})
+  await db.sync({ force: true });
   app.listen(PORT, () => {
     console.log(`App listening in port ${PORT}`);
   });
