@@ -39,6 +39,14 @@ router.post('/', async(req, res, next) => {
 router.get('/add', (req, res, next) => {
   res.send(addPage());
 });
+router.get('/search', async(req, res, next) => {
+  const page = await Page.findOne({
+    where: {
+      title: req.body.search
+    }
+  })
+  res.redirect(`/wiki/${page.slug}`);
+});
 
 router.get('/:slug', async (req, res, next) => {
   try {
@@ -47,6 +55,9 @@ router.get('/:slug', async (req, res, next) => {
         slug: req.params.slug
       }
     });
+    if ( !page){
+      res.status(404).send(`No page found with that title.`)
+    }
     const author = await User.findOne({
       where: {
         id: page.authorId
@@ -92,8 +103,12 @@ router.post(`/:slug`, async( req, res, next) => {
           slug: req.params.slug
         }
       })
-      page.destroy({ force: true})
-      res.redirect(`/wiki`);
+      // const deletePage = confirm( `This operation will permanently delete this page. Click "OK" to continue or "Cancel" to save the record`)
+      // if (deletePage){
+
+        page.destroy({ force: true})
+        res.redirect(`/wiki`);
+      // }
     } catch( error) { next( error)}
   })
 
